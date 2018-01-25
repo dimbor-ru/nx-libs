@@ -56,7 +56,10 @@ class ServerProxy : public Proxy
                                        ChannelEndPoint &smbServerPort,
                                        ChannelEndPoint &mediaServerPort,
                                        ChannelEndPoint &httpServerPort,
-                                       const char *fontServerPort);
+                                       const char *fontServerPort,
+                                       ChannelEndPoint &extra1ServerPort,
+                                       ChannelEndPoint &extra2ServerPort,
+                                       ChannelEndPoint &extra3ServerPort);
 
   protected:
 
@@ -141,6 +144,9 @@ class ServerProxy : public Proxy
   ChannelEndPoint smbServerPort_;
   ChannelEndPoint mediaServerPort_;
   ChannelEndPoint httpServerPort_;
+  ChannelEndPoint extra1ServerPort_;
+  ChannelEndPoint extra2ServerPort_;
+  ChannelEndPoint extra3ServerPort_;
 
   //
   // It will have to be passed to the channel

@@ -89,6 +89,9 @@ extern const int DEFAULT_NX_MEDIA_PORT_OFFSET;
 extern const int DEFAULT_NX_AUX_PORT_OFFSET;
 extern const int DEFAULT_NX_HTTP_PORT_OFFSET;
 extern const int DEFAULT_NX_FONT_PORT_OFFSET;
+extern const int DEFAULT_NX_EXTRA1_PORT_OFFSET;
+extern const int DEFAULT_NX_EXTRA2_PORT_OFFSET;
+extern const int DEFAULT_NX_EXTRA3_PORT_OFFSET;
 
 //
 // Slave channels can be originated by both sides

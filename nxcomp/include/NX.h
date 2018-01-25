@@ -70,6 +70,9 @@ extern "C" {
 #define NX_CHANNEL_HTTP                 4
 #define NX_CHANNEL_FONT                 5
 #define NX_CHANNEL_SLAVE                6
+#define NX_CHANNEL_EXTRA1               7
+#define NX_CHANNEL_EXTRA2               8
+#define NX_CHANNEL_EXTRA3               9
 
 #define NX_FILE_SESSION                 0
 #define NX_FILE_ERRORS                  1
@@ -341,8 +344,12 @@ extern int NXTransFlush(int fd);
  * NX_CHANNEL_FONT:  The channel will forward a X font server
  *                   connection.
  *
+ * NX_CHANNEL_EXTRA[1-3]: The channels will transport user defined
+ *                        data; NOTE: EXTRA3 has high priority like
+ *                        MEDIA channel
+ *
  * Only a proxy running at the NX server/X client side will be able
- * to create a X, CUPS, SMB, MEDIA and HTTP channel. A proxy running
+ * to create a X, CUPS, SMB, MEDIA, HTTP, EXTA channels. A proxy running
  * at the NX client/X server side can create font server connections.
  * The channel creation will also fail if the remote end has not been
  * set up to forward the connection.

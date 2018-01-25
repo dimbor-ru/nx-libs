@@ -360,6 +360,133 @@ class HttpChannel : public GenericChannel
   }
 };
 
+class Extra1Channel : public GenericChannel
+{
+  public:
+
+  Extra1Channel(Transport *transport, StaticCompressor *compressor)
+
+    : GenericChannel(transport, compressor)
+  {
+  }
+
+  virtual ~Extra1Channel()
+  {
+  }
+
+  protected:
+
+  virtual T_channel_type getType() const
+  {
+    return channel_extra1;
+  }
+
+  virtual int isCompressed()
+  {
+    // Since ProtoStep8 (#issue 108)
+    return 0;
+  }
+
+  virtual int isPrioritized()
+  {
+    return 0;
+  }
+
+  virtual void addProtocolBits(unsigned int bitsIn,
+                                   unsigned int bitsOut)
+  {
+    statistics -> addExtra1Bits(bitsIn, bitsOut);
+  }
+};
+
+class Extra2Channel : public GenericChannel
+{
+  public:
+
+  Extra2Channel(Transport *transport, StaticCompressor *compressor)
+
+    : GenericChannel(transport, compressor)
+  {
+  }
+
+  virtual ~Extra2Channel()
+  {
+  }
+
+  protected:
+
+  virtual T_channel_type getType() const
+  {
+    return channel_extra2;
+  }
+
+  virtual int isCompressed()
+  {
+    // Since ProtoStep8 (#issue 108)
+    return 0;
+  }
+
+  virtual int isPrioritized()
+  {
+    return 0;
+  }
+
+  virtual void addProtocolBits(unsigned int bitsIn,
+                                   unsigned int bitsOut)
+  {
+    statistics -> addExtra2Bits(bitsIn, bitsOut);
+  }
+};
+
+class Extra3Channel : public GenericChannel
+{
+  public:
+
+  Extra3Channel(Transport *transport, StaticCompressor *compressor)
+
+    : GenericChannel(transport, compressor)
+  {
+  }
+
+  virtual ~Extra3Channel()
+  {
+  }
+
+  protected:
+
+  virtual T_channel_type getType() const
+  {
+    return channel_extra3;
+  }
+
+  //
+  // Don't try to compress the media data.
+  //
+
+  virtual int isCompressed()
+  {
+    return 0;
+  }
+
+  //
+  // Reduce the latency of extra3 channels
+  // by setting them as prioritized, even
+  // if this will take away bandwidth from
+  // the X channels.
+  //
+
+  virtual int isPrioritized()
+  {
+    return 1;
+  }
+
+  virtual void addProtocolBits(unsigned int bitsIn,
+                                   unsigned int bitsOut)
+  {
+    statistics -> addExtra3Bits(bitsIn, bitsOut);
+  }
+};
+
 class FontChannel : public GenericChannel
 {
   public:

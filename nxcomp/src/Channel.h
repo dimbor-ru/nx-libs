@@ -79,6 +79,9 @@ typedef enum
   channel_http,
   channel_font,
   channel_slave,
+  channel_extra1,
+  channel_extra2,
+  channel_extra3,
   channel_last_tag
 
 } T_channel_type;

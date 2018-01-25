@@ -84,7 +84,10 @@ void ClientProxy::handlePortConfiguration(ChannelEndPoint &cupsServerPort,
                                           ChannelEndPoint &smbServerPort,
                                           ChannelEndPoint &mediaServerPort,
                                           ChannelEndPoint &httpServerPort,
-                                          const char *fontServerPort)
+                                          const char *fontServerPort,
+                                          ChannelEndPoint &extra1ServerPort,
+                                          ChannelEndPoint &extra2ServerPort,
+                                          ChannelEndPoint &extra3ServerPort)
 {
   delete [] fontServerPort_;
 
@@ -122,6 +125,18 @@ int ClientProxy::handleNewConnection(T_channel_type type, int clientFd)
     case channel_http:
     {
       return handleNewGenericConnection(clientFd, channel_http, "HTTP");
+    }
+    case channel_extra1:
+    {
+      return handleNewGenericConnection(clientFd, channel_extra1, "EXTRA1");
+    }
+    case channel_extra2:
+    {
+      return handleNewGenericConnection(clientFd, channel_extra2, "EXTRA2");
+    }
+    case channel_extra3:
+    {
+      return handleNewGenericConnection(clientFd, channel_extra3, "EXTRA3");
     }
     case channel_slave:
     {

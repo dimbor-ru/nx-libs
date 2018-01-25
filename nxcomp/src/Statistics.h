@@ -346,6 +346,42 @@ class Statistics
     protocolTotal_.httpBitsOut_ += bitsOut;
   }
 
+  void addExtra1Bits(unsigned int bitsIn, unsigned int bitsOut)
+  {
+    protocolPartial_.extra1Count_++;
+    protocolTotal_.extra1Count_++;
+
+    protocolPartial_.extra1BitsIn_ += bitsIn;
+    protocolTotal_.extra1BitsIn_ += bitsIn;
+
+    protocolPartial_.extra1BitsOut_ += bitsOut;
+    protocolTotal_.extra1BitsOut_ += bitsOut;
+  }
+
+  void addExtra2Bits(unsigned int bitsIn, unsigned int bitsOut)
+  {
+    protocolPartial_.extra2Count_++;
+    protocolTotal_.extra2Count_++;
+
+    protocolPartial_.extra2BitsIn_ += bitsIn;
+    protocolTotal_.extra2BitsIn_ += bitsIn;
+
+    protocolPartial_.extra2BitsOut_ += bitsOut;
+    protocolTotal_.extra2BitsOut_ += bitsOut;
+  }
+
+  void addExtra3Bits(unsigned int bitsIn, unsigned int bitsOut)
+  {
+    protocolPartial_.extra3Count_++;
+    protocolTotal_.extra3Count_++;
+
+    protocolPartial_.extra3BitsIn_ += bitsIn;
+    protocolTotal_.extra3BitsIn_ += bitsIn;
+
+    protocolPartial_.extra3BitsOut_ += bitsOut;
+    protocolTotal_.extra3BitsOut_ += bitsOut;
+  }
+
   void addFontBits(unsigned int bitsIn, unsigned int bitsOut)
   {
     protocolPartial_.fontCount_++;
@@ -495,6 +531,9 @@ class Statistics
                         protocolTotal_.smbBitsOut_ +
                             protocolTotal_.mediaBitsOut_ +
                                 protocolTotal_.httpBitsOut_ +
+                                protocolTotal_.extra1BitsOut_ +
+                                protocolTotal_.extra2BitsOut_ +
+                                protocolTotal_.extra3BitsOut_ +
                                     protocolTotal_.fontBitsOut_ +
                                         protocolTotal_.slaveBitsOut_) / 8;
 
@@ -635,6 +674,18 @@ class Statistics
     double httpCount_;
     double httpBitsIn_;
     double httpBitsOut_;
+
+    double extra1Count_;
+    double extra1BitsIn_;
+    double extra1BitsOut_;
+
+    double extra2Count_;
+    double extra2BitsIn_;
+    double extra2BitsOut_;
+
+    double extra3Count_;
+    double extra3BitsIn_;
+    double extra3BitsOut_;
 
     double fontCount_;
     double fontBitsIn_;

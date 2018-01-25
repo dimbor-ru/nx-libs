@@ -68,6 +68,10 @@ ServerProxy::ServerProxy(int proxyFd) : Proxy(proxyFd)
   mediaServerPort_ = NULL;
   httpServerPort_  = NULL;
 
+  extra1ServerPort_  = NULL;
+  extra2ServerPort_  = NULL;
+  extra3ServerPort_  = NULL;
+
   fontServerPort_ = NULL;
 
   #ifdef DEBUG
@@ -117,12 +121,19 @@ void ServerProxy::handlePortConfiguration(ChannelEndPoint &cupsServerPort,
                                           ChannelEndPoint &smbServerPort,
                                           ChannelEndPoint &mediaServerPort,
                                           ChannelEndPoint &httpServerPort,
-                                          const char *fontServerPort)
+                                          const char *fontServerPort,
+                                          ChannelEndPoint &extra1ServerPort,
+                                          ChannelEndPoint &extra2ServerPort,
+                                          ChannelEndPoint &extra3ServerPort)
 {
   cupsServerPort_  = cupsServerPort;
   smbServerPort_   = smbServerPort;
   mediaServerPort_ = mediaServerPort;
   httpServerPort_  = httpServerPort;
+
+  extra1ServerPort_  = extra1ServerPort;
+  extra2ServerPort_  = extra2ServerPort;
+  extra3ServerPort_  = extra3ServerPort;
 
   delete [] fontServerPort_;
 
@@ -133,8 +144,11 @@ void ServerProxy::handlePortConfiguration(ChannelEndPoint &cupsServerPort,
   #ifdef DEBUG
   *logofs << "ServerProxy: Set port configuration to CUPS "
           << cupsServerPort_ << ", SMB " << smbServerPort_
-          << ", media " << mediaServerPort_ << ", HTTP "
-          << httpServerPort_ << ".\n"
+          << ", media " << mediaServerPort_
+          << ", HTTP " << httpServerPort_
+          << ", extra1 " << extra1ServerPort_
+          << ", extra2 " << extra2ServerPort_
+          << ", extra3 " << extra3ServerPort_ << ".\n"
           << logofs_flush;
   #endif
 }
@@ -194,6 +208,21 @@ int ServerProxy::handleNewConnectionFromProxy(T_channel_type type, int channelId
     {
       return handleNewGenericConnectionFromProxy(channelId, channel_http,
                                                      httpServerPort_, "HTTP");
+    }
+    case channel_extra1:
+    {
+      return handleNewGenericConnectionFromProxy(channelId, channel_extra1,
+                                                     extra1ServerPort_, "EXTRA1");
+    }
+    case channel_extra2:
+    {
+      return handleNewGenericConnectionFromProxy(channelId, channel_extra2,
+                                                     extra2ServerPort_, "EXTRA2");
+    }
+    case channel_extra3:
+    {
+      return handleNewGenericConnectionFromProxy(channelId, channel_extra3,
+                                                     extra3ServerPort_, "EXTRA3");
     }
     case channel_slave:
     {

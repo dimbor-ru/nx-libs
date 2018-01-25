@@ -78,7 +78,7 @@
 // at the NX server side (X client side).
 //
 
-#define CHANNEL_MASK                             0x07
+#define CHANNEL_MASK                             0x0F
 
 //
 // Kill session if control parameters cannot be

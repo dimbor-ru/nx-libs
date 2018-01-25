@@ -131,6 +131,9 @@ typedef enum
   code_split_token_reply,
   code_data_token_request,
   code_data_token_reply,
+  code_new_extra1_connection,
+  code_new_extra2_connection,
+  code_new_extra3_connection,
   code_last_tag
 
 } T_proxy_code;
@@ -271,7 +274,10 @@ class Proxy
                                        ChannelEndPoint &smbServerPort,
                                        ChannelEndPoint &mediaServerPort,
                                        ChannelEndPoint &httpServerPort,
-                                       const char *fontServerPort) = 0;
+                                       const char *fontServerPort,
+                                       ChannelEndPoint &extra1ServerPort,
+                                       ChannelEndPoint &extra2ServerPort,
+                                       ChannelEndPoint &extra3ServerPort) = 0;
 
   //
   // Create new tunneled channels.

@@ -153,6 +153,18 @@ Statistics::Statistics(Proxy *proxy) : proxy_(proxy)
   protocolPartial_.httpBitsIn_   = 0;
   protocolPartial_.httpBitsOut_  = 0;
 
+  protocolPartial_.extra1Count_    = 0;
+  protocolPartial_.extra1BitsIn_   = 0;
+  protocolPartial_.extra1BitsOut_  = 0;
+
+  protocolPartial_.extra2Count_    = 0;
+  protocolPartial_.extra2BitsIn_   = 0;
+  protocolPartial_.extra2BitsOut_  = 0;
+
+  protocolPartial_.extra3Count_    = 0;
+  protocolPartial_.extra3BitsIn_   = 0;
+  protocolPartial_.extra3BitsOut_  = 0;
+
   protocolPartial_.fontCount_    = 0;
   protocolPartial_.fontBitsIn_   = 0;
   protocolPartial_.fontBitsOut_  = 0;
@@ -176,6 +188,18 @@ Statistics::Statistics(Proxy *proxy) : proxy_(proxy)
   protocolTotal_.httpCount_    = 0;
   protocolTotal_.httpBitsIn_   = 0;
   protocolTotal_.httpBitsOut_  = 0;
+
+  protocolTotal_.extra1Count_    = 0;
+  protocolTotal_.extra1BitsIn_   = 0;
+  protocolTotal_.extra1BitsOut_  = 0;
+
+  protocolTotal_.extra2Count_    = 0;
+  protocolTotal_.extra2BitsIn_   = 0;
+  protocolTotal_.extra2BitsOut_  = 0;
+
+  protocolTotal_.extra3Count_    = 0;
+  protocolTotal_.extra3BitsIn_   = 0;
+  protocolTotal_.extra3BitsOut_  = 0;
 
   protocolTotal_.fontCount_    = 0;
   protocolTotal_.fontBitsIn_   = 0;
@@ -286,6 +310,18 @@ int Statistics::resetPartialStats()
   protocolPartial_.httpCount_    = 0;
   protocolPartial_.httpBitsIn_   = 0;
   protocolPartial_.httpBitsOut_  = 0;
+
+  protocolPartial_.extra1Count_    = 0;
+  protocolPartial_.extra1BitsIn_   = 0;
+  protocolPartial_.extra1BitsOut_  = 0;
+
+  protocolPartial_.extra2Count_    = 0;
+  protocolPartial_.extra2BitsIn_   = 0;
+  protocolPartial_.extra2BitsOut_  = 0;
+
+  protocolPartial_.extra3Count_    = 0;
+  protocolPartial_.extra3BitsIn_   = 0;
+  protocolPartial_.extra3BitsOut_  = 0;
 
   protocolPartial_.fontCount_    = 0;
   protocolPartial_.fontBitsIn_   = 0;
@@ -957,6 +993,18 @@ int Statistics::getClientProtocolStats(int type, char *&buffer)
   countBitsIn  += protocolData -> httpBitsIn_;
   countBitsOut += protocolData -> httpBitsOut_;
 
+  countAnyIn   += protocolData -> extra1Count_;
+  countBitsIn  += protocolData -> extra1BitsIn_;
+  countBitsOut += protocolData -> extra1BitsOut_;
+
+  countAnyIn   += protocolData -> extra2Count_;
+  countBitsIn  += protocolData -> extra2BitsIn_;
+  countBitsOut += protocolData -> extra2BitsOut_;
+
+  countAnyIn   += protocolData -> extra3Count_;
+  countBitsIn  += protocolData -> extra3BitsIn_;
+  countBitsOut += protocolData -> extra3BitsOut_;
+
   countAnyIn   += protocolData -> fontCount_;
   countBitsIn  += protocolData -> fontBitsIn_;
   countBitsOut += protocolData -> fontBitsOut_;
@@ -1618,6 +1666,18 @@ int Statistics::getServerProtocolStats(int type, char *&buffer)
   countBitsIn  += protocolData -> httpBitsIn_;
   countBitsOut += protocolData -> httpBitsOut_;
 
+  countAnyIn   += protocolData -> extra1Count_;
+  countBitsIn  += protocolData -> extra1BitsIn_;
+  countBitsOut += protocolData -> extra1BitsOut_;
+
+  countAnyIn   += protocolData -> extra2Count_;
+  countBitsIn  += protocolData -> extra2BitsIn_;
+  countBitsOut += protocolData -> extra2BitsOut_;
+
+  countAnyIn   += protocolData -> extra3Count_;
+  countBitsIn  += protocolData -> extra3BitsIn_;
+  countBitsOut += protocolData -> extra3BitsOut_;
+
   countAnyIn   += protocolData -> fontCount_;
   countBitsIn  += protocolData -> fontBitsIn_;
   countBitsOut += protocolData -> fontBitsOut_;
@@ -1869,6 +1929,36 @@ int Statistics::getServicesStats(int type, char *&buffer)
                 protocolData -> httpCount_ , protocolData -> httpBitsIn_ / 8,
                     protocolData -> httpBitsIn_ / 8192, protocolData -> httpBitsOut_ / 8,
                         protocolData -> httpBitsOut_ / 8192);
+
+    strcat(buffer, format);
+  }
+
+  if (protocolData -> extra1BitsOut_ > 0)
+  {
+    sprintf(format, "      %.0f EXTRA1 messages, %.0f bytes (%.0f KB) in, %.0f bytes (%.0f KB) out.\n\n",
+                protocolData -> extra1Count_ , protocolData -> extra1BitsIn_ / 8,
+                    protocolData -> extra1BitsIn_ / 8192, protocolData -> extra1BitsOut_ / 8,
+                        protocolData -> extra1BitsOut_ / 8192);
+
+    strcat(buffer, format);
+  }
+
+  if (protocolData -> extra2BitsOut_ > 0)
+  {
+    sprintf(format, "      %.0f EXTRA2 messages, %.0f bytes (%.0f KB) in, %.0f bytes (%.0f KB) out.\n\n",
+                protocolData -> extra2Count_ , protocolData -> extra2BitsIn_ / 8,
+                    protocolData -> extra2BitsIn_ / 8192, protocolData -> extra2BitsOut_ / 8,
+                        protocolData -> extra2BitsOut_ / 8192);
+
+    strcat(buffer, format);
+  }
+
+  if (protocolData -> extra3BitsOut_ > 0)
+  {
+    sprintf(format, "      %.0f EXTRA3 messages, %.0f bytes (%.0f KB) in, %.0f bytes (%.0f KB) out.\n\n",
+                protocolData -> extra3Count_ , protocolData -> extra3BitsIn_ / 8,
+                    protocolData -> extra3BitsIn_ / 8192, protocolData -> extra3BitsOut_ / 8,
+                        protocolData -> extra3BitsOut_ / 8192);
 
     strcat(buffer, format);
   }

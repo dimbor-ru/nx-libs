@@ -50,7 +50,10 @@ class ClientProxy : public Proxy
                                        ChannelEndPoint &smbServerPort,
                                        ChannelEndPoint &mediaServerPort,
                                        ChannelEndPoint &httpServerPort,
-                                       const char *fontServerPort);
+                                       const char *fontServerPort,
+                                       ChannelEndPoint &extra1ServerPort,
+                                       ChannelEndPoint &extra2ServerPort,
+                                       ChannelEndPoint &extra3ServerPort);
 
   protected:
 

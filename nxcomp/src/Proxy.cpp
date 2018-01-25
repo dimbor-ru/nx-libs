@@ -761,6 +761,18 @@ const char *Proxy::getTypeName(T_channel_type type)
     {
       return "HTTP";
     }
+    case channel_extra1:
+    {
+      return "EXTRA1";
+    }
+    case channel_extra2:
+    {
+      return "EXTRA2";
+    }
+    case channel_extra3:
+    {
+      return "EXTRA3";
+    }
     case channel_font:
     {
       return "font";
@@ -1474,6 +1486,24 @@ int Proxy::handleControlFromProxy(const unsigned char *message)
     case code_new_http_connection:
     {
       channelType = channel_http;
+
+      break;
+    }
+    case code_new_extra1_connection:
+    {
+      channelType = channel_extra1;
+
+      break;
+    }
+    case code_new_extra2_connection:
+    {
+      channelType = channel_extra2;
+
+      break;
+    }
+    case code_new_extra3_connection:
+    {
+      channelType = channel_extra3;
 
       break;
     }
@@ -4482,6 +4512,9 @@ int Proxy::handleControl(T_proxy_code code, int data)
     case code_new_smb_connection:
     case code_new_media_connection:
     case code_new_http_connection:
+    case code_new_extra1_connection:
+    case code_new_extra2_connection:
+    case code_new_extra3_connection:
     case code_new_font_connection:
     case code_new_slave_connection:
 
@@ -6018,6 +6051,24 @@ int Proxy::handleNewGenericConnection(int clientFd, T_channel_type type, const c
 
       break;
     }
+    case channel_extra1:
+    {
+      channels_[channelId] = new Extra1Channel(transports_[channelId], compressor_);
+
+      break;
+    }
+    case channel_extra2:
+    {
+      channels_[channelId] = new Extra2Channel(transports_[channelId], compressor_);
+
+      break;
+    }
+    case channel_extra3:
+    {
+      channels_[channelId] = new Extra3Channel(transports_[channelId], compressor_);
+
+      break;
+    }
     case channel_font:
     {
       channels_[channelId] = new FontChannel(transports_[channelId], compressor_);
@@ -6081,6 +6132,33 @@ int Proxy::handleNewGenericConnection(int clientFd, T_channel_type type, const c
     case channel_http:
     {
       if (handleControl(code_new_http_connection, channelId) < 0)
+      {
+        return -1;
+      }
+
+      break;
+    }
+    case channel_extra1:
+    {
+      if (handleControl(code_new_extra1_connection, channelId) < 0)
+      {
+        return -1;
+      }
+
+      break;
+    }
+    case channel_extra2:
+    {
+      if (handleControl(code_new_extra2_connection, channelId) < 0)
+      {
+        return -1;
+      }
+
+      break;
+    }
+    case channel_extra3:
+    {
+      if (handleControl(code_new_extra3_connection, channelId) < 0)
       {
         return -1;
       }
@@ -6499,6 +6577,24 @@ int Proxy::handlePostConnectionFromProxy(int channelId, int serverFd,
     case channel_http:
     {
       channels_[channelId] = new HttpChannel(transports_[channelId], compressor_);
+
+      break;
+    }
+    case channel_extra1:
+    {
+      channels_[channelId] = new Extra1Channel(transports_[channelId], compressor_);
+
+      break;
+    }
+    case channel_extra2:
+    {
+      channels_[channelId] = new Extra2Channel(transports_[channelId], compressor_);
+
+      break;
+    }
+    case channel_extra3:
+    {
+      channels_[channelId] = new Extra3Channel(transports_[channelId], compressor_);
 
       break;
     }

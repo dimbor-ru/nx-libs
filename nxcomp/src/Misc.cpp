@@ -112,6 +112,10 @@ const int DEFAULT_NX_FONT_PORT_OFFSET  = 10000;
 const int DEFAULT_NX_SLAVE_PORT_CLIENT_OFFSET = 11000;
 const int DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET = 12000;
 
+const int DEFAULT_NX_EXTRA1_PORT_OFFSET = 7250;
+const int DEFAULT_NX_EXTRA2_PORT_OFFSET = 7500;
+const int DEFAULT_NX_EXTRA3_PORT_OFFSET = 7750;
+
 //
 // Usage info and copyright.
 //
@@ -278,6 +282,12 @@ static const char UsageInfo[] =
   media=n      Enable forwarding of audio connections.\n\
 \n\
   http=n       Enable forwarding of HTTP connections.\n\
+\n\
+  extra1=n     Enable forwarding of EXTRA1 connections.\n\
+\n\
+  extra2=n     Enable forwarding of EXTRA2 connections.\n\
+\n\
+  extra3=n     Enable forwarding of EXTRA3 connections.\n\
 \n\
   font=n       Enable forwarding of reversed connections to a font\n\
                server running on the NX server.\n\
@@ -980,6 +990,18 @@ const char *DumpControl(int code)
     case code_new_media_connection:
     {
       return "code_new_media_connection";
+    }
+    case code_new_extra1_connection:
+    {
+      return "code_new_extra1_connection";
+    }
+    case code_new_extra2_connection:
+    {
+      return "code_new_extra2_connection";
+    }
+    case code_new_extra3_connection:
+    {
+      return "code_new_extra3_connection";
     }
     case code_switch_connection:
     {

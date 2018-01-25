@@ -858,6 +858,9 @@ static int auxFD   = -1;
 static int smbFD   = -1;
 static int mediaFD = -1;
 static int httpFD  = -1;
+static int extra1FD  = -1;
+static int extra2FD  = -1;
+static int extra3FD  = -1;
 static int fontFD  = -1;
 static int slaveFD = -1;
 static int proxyFD = -1;
@@ -882,6 +885,9 @@ static int useAuxSocket   = 0;
 static int useSmbSocket   = 0;
 static int useMediaSocket = 0;
 static int useHttpSocket  = 0;
+static int useExtra1Socket  = 0;
+static int useExtra2Socket  = 0;
+static int useExtra3Socket  = 0;
 static int useFontSocket  = 0;
 static int useSlaveSocket = 0;
 static int useAgentSocket = 0;
@@ -985,6 +991,9 @@ static ChannelEndPoint auxPort;
 static ChannelEndPoint smbPort;
 static ChannelEndPoint mediaPort;
 static ChannelEndPoint httpPort;
+static ChannelEndPoint extra1Port;
+static ChannelEndPoint extra2Port;
+static ChannelEndPoint extra3Port;
 static ChannelEndPoint slavePort;
 
 //
@@ -2404,6 +2413,33 @@ int NXTransChannel(int fd, int channelFd, int type)
 
         break;
       }
+      case NX_CHANNEL_EXTRA1:
+      {
+        if (useExtra1Socket == 1)
+        {
+          result = proxy -> handleNewConnection(channel_extra1, channelFd);
+        }
+
+        break;
+      }
+      case NX_CHANNEL_EXTRA2:
+      {
+        if (useExtra2Socket == 1)
+        {
+          result = proxy -> handleNewConnection(channel_extra2, channelFd);
+        }
+
+        break;
+      }
+      case NX_CHANNEL_EXTRA3:
+      {
+        if (useExtra3Socket == 1)
+        {
+          result = proxy -> handleNewConnection(channel_extra3, channelFd);
+        }
+
+        break;
+      }
       case NX_CHANNEL_FONT:
       {
         if (useFontSocket == 1)
@@ -3485,7 +3521,8 @@ int SetupProxyInstance()
                                           xServerAddr, xServerAddrLength);
 
   proxy -> handlePortConfiguration(cupsPort, smbPort, mediaPort,
-                                       httpPort, fontPort);
+                                       httpPort, fontPort,
+                                       extra1Port, extra2Port, extra3Port);
 
   //
   // We handed over the sockaddr structure we
@@ -4156,6 +4193,30 @@ void SetupServiceSockets()
       }
     }
 
+    if (useExtra1Socket)
+    {
+      if ((extra1FD = ListenConnection(extra1Port, "extra1")) < 0)
+      {
+        useExtra1Socket = 0;
+      }
+    }
+
+    if (useExtra2Socket)
+    {
+      if ((extra2FD = ListenConnection(extra2Port, "extra2")) < 0)
+      {
+        useExtra2Socket = 0;
+      }
+    }
+
+    if (useExtra3Socket)
+    {
+      if ((extra3FD = ListenConnection(extra3Port, "extra3")) < 0)
+      {
+        useExtra3Socket = 0;
+      }
+    }
+
     useFontSocket = 0;
   }
   else
@@ -4180,6 +4241,9 @@ void SetupServiceSockets()
     useSmbSocket   = 0;
     useMediaSocket = 0;
     useHttpSocket  = 0;
+    useExtra1Socket  = 0;
+    useExtra2Socket  = 0;
+    useExtra3Socket  = 0;
   }
 
   //
@@ -5042,6 +5106,60 @@ void CleanupListeners()
     useHttpSocket = 0;
   }
 
+  if (useExtra1Socket == 1)
+  {
+    if (extra1FD != -1)
+    {
+      #ifdef TEST
+      *logofs << "Loop: Closing extra1 listener in process "
+              << "with pid '" << getpid() << "'.\n"
+              << logofs_flush;
+      #endif
+
+      close(extra1FD);
+
+      extra1FD = -1;
+    }
+
+    useExtra1Socket = 0;
+  }
+
+  if (useExtra2Socket == 1)
+  {
+    if (extra2FD != -1)
+    {
+      #ifdef TEST
+      *logofs << "Loop: Closing extra2 listener in process "
+              << "with pid '" << getpid() << "'.\n"
+              << logofs_flush;
+      #endif
+
+      close(extra2FD);
+
+      extra2FD = -1;
+    }
+
+    useExtra2Socket = 0;
+  }
+
+  if (useExtra3Socket == 1)
+  {
+    if (extra3FD != -1)
+    {
+      #ifdef TEST
+      *logofs << "Loop: Closing extra3 listener in process "
+              << "with pid '" << getpid() << "'.\n"
+              << logofs_flush;
+      #endif
+
+      close(extra3FD);
+
+      extra3FD = -1;
+    }
+
+    useExtra3Socket = 0;
+  }
+
   if (useFontSocket == 1)
   {
     if (fontFD != -1)
@@ -5136,6 +5254,9 @@ void CleanupLocal()
   smbFD   = -1;
   mediaFD = -1;
   httpFD  = -1;
+  extra1FD  = -1;
+  extra2FD  = -1;
+  extra3FD  = -1;
   fontFD  = -1;
   slaveFD = -1;
   proxyFD = -1;
@@ -5150,6 +5271,9 @@ void CleanupLocal()
   useSmbSocket   = 0;
   useMediaSocket = 0;
   useHttpSocket  = 0;
+  useExtra1Socket  = 0;
+  useExtra2Socket  = 0;
+  useExtra3Socket  = 0;
   useFontSocket  = 0;
   useSlaveSocket = 0;
   useAgentSocket = 0;
@@ -5183,6 +5307,9 @@ void CleanupLocal()
   smbPort.disable();
   mediaPort.disable();
   httpPort.disable();
+  extra1Port.disable();
+  extra2Port.disable();
+  extra3Port.disable();
   slavePort.disable();
 
   *fontPort = '\0';
@@ -8336,6 +8463,18 @@ int ParseEnvironmentOptions(const char *env, int force)
     {
       SetAndValidateChannelEndPointArg("local", name, value, httpPort);
     }
+    else if (strcasecmp(name, "extra1") == 0)
+    {
+      SetAndValidateChannelEndPointArg("local", name, value, extra1Port);
+    }
+    else if (strcasecmp(name, "extra2") == 0)
+    {
+      SetAndValidateChannelEndPointArg("local", name, value, extra2Port);
+    }
+    else if (strcasecmp(name, "extra3") == 0)
+    {
+      SetAndValidateChannelEndPointArg("local", name, value, extra3Port);
+    }
     else if (strcasecmp(name, "font") == 0)
     {
       snprintf(fontPort, DEFAULT_STRING_LENGTH, "%s", value);
@@ -11080,6 +11219,51 @@ int SetPorts()
   nxinfo << "Loop: Using HTTP port '" << httpPort
          << "'.\n" << std::flush;
 
+  if ( extra1Port.configured() ) {
+    if (control -> ProxyMode == proxy_client) {
+      extra1Port.setDefaultTCPPort(DEFAULT_NX_EXTRA1_PORT_OFFSET + proxyPort);
+      useExtra1Socket = extra1Port.enabled();
+    } else {
+      if ( extra1Port.getTCPPort() < 0 ) {
+        nxfatal << "Loop: PANIC! No port specified for EXTRA1 connections.\n"
+                << std::flush;
+        cerr << "Error" << ": No port specified for EXTRA1 connections.\n";
+        HandleCleanup();
+      }
+    }
+    nxinfo << "Loop: Using EXTRA1 port '" << extra1Port << "'.\n" << std::flush;
+  }
+
+  if ( extra2Port.configured() ) {
+    if (control -> ProxyMode == proxy_client) {
+      extra2Port.setDefaultTCPPort(DEFAULT_NX_EXTRA2_PORT_OFFSET + proxyPort);
+      useExtra2Socket = extra2Port.enabled();
+    } else {
+      if ( extra2Port.getTCPPort() < 0 ) {
+        nxfatal << "Loop: PANIC! No port specified for EXTRA2 connections.\n"
+                << std::flush;
+        cerr << "Error" << ": No port specified for EXTRA2 connections.\n";
+        HandleCleanup();
+      }
+    }
+    nxinfo << "Loop: Using EXTRA2 port '" << extra2Port << "'.\n" << std::flush;
+  }
+
+  if ( extra3Port.configured() ) {
+    if (control -> ProxyMode == proxy_client) {
+      extra3Port.setDefaultTCPPort(DEFAULT_NX_EXTRA3_PORT_OFFSET + proxyPort);
+      useExtra3Socket = extra3Port.enabled();
+    } else {
+      if ( extra3Port.getTCPPort() < 0 ) {
+        nxfatal << "Loop: PANIC! No port specified for EXTRA3 connections.\n"
+                << std::flush;
+        cerr << "Error" << ": No port specified for EXTRA3 connections.\n";
+        HandleCleanup();
+      }
+    }
+    nxinfo << "Loop: Using EXTRA3 port '" << extra3Port << "'.\n" << std::flush;
+  }
+
   if (ParseFontPath(fontPort) <= 0)
   {
     nxinfo << "Loop: Disabling font server connections.\n"
@@ -13286,6 +13470,42 @@ void PrintConnectionInfo()
          << "to port '" << httpPort << "'.\n";
   }
 
+  if (control -> ProxyMode == proxy_client &&
+          useExtra1Socket > 0 && extra1Port.enabled())
+  {
+    cerr << "Info" << ": Listening to EXTRA1 connections "
+         << "on port '" << extra1Port << "'.\n";
+  }
+  else if (control -> ProxyMode == proxy_server && extra1Port.enabled())
+  {
+    cerr << "Info" << ": Forwarding EXTRA1 connections "
+         << "to port '" << extra1Port << "'.\n";
+  }
+
+  if (control -> ProxyMode == proxy_client &&
+          useExtra2Socket > 0 && extra2Port.enabled())
+  {
+    cerr << "Info" << ": Listening to EXTRA2 connections "
+         << "on port '" << extra2Port << "'.\n";
+  }
+  else if (control -> ProxyMode == proxy_server && extra2Port.enabled())
+  {
+    cerr << "Info" << ": Forwarding EXTRA2 connections "
+         << "to port '" << extra2Port << "'.\n";
+  }
+
+  if (control -> ProxyMode == proxy_client &&
+          useExtra3Socket > 0 && extra3Port.enabled())
+  {
+    cerr << "Info" << ": Listening to EXTRA3 connections "
+         << "on port '" << extra3Port << "'.\n";
+  }
+  else if (control -> ProxyMode == proxy_server && extra3Port.enabled())
+  {
+    cerr << "Info" << ": Forwarding EXTRA3 connections "
+         << "to port '" << extra3Port << "'.\n";
+  }
+
   if (control -> ProxyMode == proxy_server &&
           useFontSocket > 0 && *fontPort != '\0')
   {
@@ -15241,6 +15461,36 @@ static inline void handleReadableInLoop(int &resultFDs, fd_set &readSet)
       resultFDs--;
     }
 
+    if (extra1FD != -1 && FD_ISSET(extra1FD, &readSet))
+    {
+      type   = channel_extra1;
+      label  = "EXTRA1";
+      domain = AF_INET;
+      fd     = extra1FD;
+
+      resultFDs--;
+    }
+
+    if (extra2FD != -1 && FD_ISSET(extra2FD, &readSet))
+    {
+      type   = channel_extra2;
+      label  = "EXTRA2";
+      domain = AF_INET;
+      fd     = extra2FD;
+
+      resultFDs--;
+    }
+
+    if (extra3FD != -1 && FD_ISSET(extra3FD, &readSet))
+    {
+      type   = channel_extra3;
+      label  = "EXTRA3";
+      domain = AF_INET;
+      fd     = extra3FD;
+
+      resultFDs--;
+    }
+
     if (fontFD != -1 && FD_ISSET(fontFD, &readSet))
     {
       type   = channel_font;
@@ -15552,6 +15802,54 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       nxdbg << "Loop: Selected listener fontFD " << fontFD
             << " with setFDs " << setFDs << ".\n"
             << std::flush;
+    }
+
+    if (useExtra1Socket == 1)
+    {
+      FD_SET(extra1FD, &readSet);
+
+      if (extra1FD >= setFDs)
+      {
+        setFDs = extra1FD + 1;
+      }
+
+      #ifdef DEBUG
+      *logofs << "Loop: Selected listener extra1FD " << extra1FD
+              << " with setFDs " << setFDs << ".\n"
+              << logofs_flush;
+      #endif
+    }
+
+    if (useExtra2Socket == 1)
+    {
+      FD_SET(extra2FD, &readSet);
+
+      if (extra2FD >= setFDs)
+      {
+        setFDs = extra2FD + 1;
+      }
+
+      #ifdef DEBUG
+      *logofs << "Loop: Selected listener extra2FD " << extra2FD
+              << " with setFDs " << setFDs << ".\n"
+              << logofs_flush;
+      #endif
+    }
+
+    if (useExtra3Socket == 1)
+    {
+      FD_SET(extra3FD, &readSet);
+
+      if (extra3FD >= setFDs)
+      {
+        setFDs = extra3FD + 1;
+      }
+
+      #ifdef DEBUG
+      *logofs << "Loop: Selected listener extra3FD " << extra3FD
+              << " with setFDs " << setFDs << ".\n"
+              << logofs_flush;
+      #endif
     }
   }
 
