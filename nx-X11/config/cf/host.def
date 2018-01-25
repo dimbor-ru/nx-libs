@@ -551,3 +551,8 @@
  *
 #define X86EMU_LIBPATH /usr/local/lib
  */ 
+
+/* Build locales for nxagent */
+#define MotifDir $(LIBDIR)
+#define XLocaleDir /usr/share/locale
+#define XLocaleLibDir $(LIBDIR)

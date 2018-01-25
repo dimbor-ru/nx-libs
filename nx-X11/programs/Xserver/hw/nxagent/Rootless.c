@@ -42,6 +42,10 @@
 
 #include "compext/Compext.h"
 
+/* by dimbor */
+#include "Xatom.h"
+#include <X11/Xlocale.h>
+
 /*
  * Set here the required log level.
  */
@@ -107,6 +111,10 @@ typedef struct {
 static TopLevelParentMap topLevelParentMap = { NULL, 0, 0 };
 
 static void nxagentRemovePropertyFromList(void);
+
+/* by dimbor */
+static char szAgentUTF8_STRING[] = "UTF8_STRING";
+static Atom agentUTF8_STRING;
 
 #if 0
 /*
@@ -400,6 +408,28 @@ Window nxagentRootlessWindowParent(WindowPtr pWin)
   }
 }
 
+/* by dimbor */
+char *textToUTF8String(char *text, int nitems) 
+{
+  XTextProperty t_prop;
+  char *ret=NULL;
+  t_prop.value=((unsigned char *)text);
+  t_prop.nitems=nitems;
+  if (!t_prop.nitems)
+    return ret;
+  t_prop.format=8;
+  t_prop.encoding=XInternAtom(nxagentDisplay, "COMPOUND_TEXT", 0);
+  char **list;
+  int num;
+  int r = XmbTextPropertyToTextList(nxagentDisplay, &t_prop,&list, &num);
+  if ((r == Success || r > 0) && num > 0 && *list)
+  {
+    ret=(char *)strdup (*list);
+    XFreeStringList(list);
+  }
+  return ret;
+}
+
 int nxagentExportAllProperty(WindowPtr pWin)
 {
   int total = 0;
@@ -440,6 +470,7 @@ int nxagentExportProperty(WindowPtr pWin,
 
   if (strncmp(propertyS, "WM_", 3) != 0 &&
           strncmp(propertyS, "_NET_", 5) != 0 &&
+          strncmp(propertyS, "_MOTIF_", 7) != 0 &&
               strcmp(propertyS, "_KDE_NET_WM_SYSTEM_TRAY_WINDOW_FOR") != 0)
   {
     #ifdef TEST
@@ -451,6 +482,7 @@ int nxagentExportProperty(WindowPtr pWin,
   }
   else if (strcmp(typeS, "STRING") == 0 ||
                #ifndef _XSERVER64
+             strcmp(typeS, "_MOTIF_WM_HINTS") == 0 ||
                strcmp(typeS, "CARDINAL") == 0 ||
                    strcmp(typeS, "WM_SIZE_HINTS") == 0 ||
                #endif
@@ -459,8 +491,18 @@ int nxagentExportProperty(WindowPtr pWin,
     output = value;
     export = True;
   }
+  /* add by dimbor */
+  else if (strcmp(typeS, "COMPOUND_TEXT") == 0)
+  {
+    output = textToUTF8String(value, nUnits);
+    nUnits = strlen((char *) output);
+    type = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
+    freeMem = True;
+    export = True;
+  }
   #ifdef _XSERVER64
-  else if (strcmp(typeS, "CARDINAL") == 0 || strcmp(typeS, "WM_SIZE_HINTS") == 0)
+  else if (strcmp(typeS, "CARDINAL") == 0 || strcmp(typeS, "WM_SIZE_HINTS") == 0 ||
+           strcmp(typeS, "_MOTIF_WM_HINTS") == 0)
   {
     unsigned long *buffer = malloc(nUnits * sizeof(*buffer));
     if (buffer == NULL)

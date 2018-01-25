@@ -86,6 +86,9 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
+/* by dimbor */
+#include <X11/Xlocale.h>
+
 /*
  * ProcVector array defined in tables.c.
  */
@@ -409,6 +412,20 @@ FIXME: These variables, if not removed at all because have probably
 
   if (!whiteRoot)
     blackRoot = TRUE;
+
+  /* by dimbor */
+  char *locale = setlocale(LC_ALL, "");
+  if (!locale)
+   fprintf(stderr, "InitOutput: failed to set locale, reverting to \"C\"\n");
+  else
+  {
+    if (!XSupportsLocale())
+      fprintf(stderr, "InitOutput: Locale %s not supported by X\n",locale);
+    else
+      fprintf(stderr, "InitOutput: Set %s locale\n",locale);
+  }
+  if (!XSetLocaleModifiers(""))
+         fprintf(stderr,"InitOutput: cannot set locale modifiers.\n");
 
   nxagentInitKeystrokes(False);
 
